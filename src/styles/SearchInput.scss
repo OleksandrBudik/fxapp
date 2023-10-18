@@ -1,0 +1,18 @@
+@import 'constants';
+
+.search-input__wrapper {
+  display: flex;
+
+  .search-input {
+    &__label {
+      font-size: 14px;
+      padding-right: 4px;
+      color: $white;
+      display: inline-flex;
+    }
+  }
+
+  .input-area {
+    border: 1px solid $black;
+  }
+}
