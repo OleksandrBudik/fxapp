@@ -1,0 +1,28 @@
+@import 'constants';
+
+.currency-item {
+  border: 1px solid $black;
+  display: flex;
+  align-items: center;
+  padding: 4px 6px 4px 0;
+  margin: 4px 12px 4px 0;
+
+  .flag {
+    display: flex;
+    padding: 0 12px;
+    img {
+      height: 14px;
+    }
+  }
+
+  .country,
+  .currency,
+  .rate {
+    padding: 0 12px;
+    font-size: 18px;
+  }
+
+  .rate {
+    margin-left: auto;
+  }
+}
