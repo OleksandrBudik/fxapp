@@ -13,9 +13,8 @@ export const validateCurrency = (currencyItem) => {
   return false
 }
 
-export const shouldShow = (currencyItem, searchTerm) => {
+export const matchSearch = (currencyItem, searchTerm) => {
   if (!searchTerm) return true
-  console.log(' curr item ', currencyItem, ' term ', searchTerm)
   return currencyItem?.currency
     .toLowerCase()
     .includes(searchTerm?.trim()?.toLowerCase())
@@ -30,9 +29,9 @@ export const deserialiseCurrencyResponse = (response, searchTerm = '') => {
     return {
       baseCurrency: baseCurrency,
       fxData: response.fx?.filter((currency) => {
-        return validateCurrency(currency) && shouldShow(currency, searchTerm)
+        return validateCurrency(currency) && matchSearch(currency, searchTerm)
       }),
     }
   }
-  return { data: [] }
+  return { fxData: [] }
 }

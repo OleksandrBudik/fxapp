@@ -1,8 +1,16 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import App from './App'
 
-test('renders learn react link', () => {
-  render(<App />)
-  const linkElement = screen.getByText(/learn react/i)
-  expect(linkElement).toBeInTheDocument()
+describe('test22', () => {
+  beforeEach(() => {
+    fetchMock.resetMocks()
+  })
+  test('renders App container with Search Input inside', async () => {
+    waitFor(() => {
+      const app = render(<App />)
+      expect(app.container).toBeDefined
+    })
+    const searchInput = screen.getByRole('searchbox')
+    expect(searchInput).toBeTruthy()
+  })
 })

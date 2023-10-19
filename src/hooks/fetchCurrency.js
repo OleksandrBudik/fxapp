@@ -7,12 +7,10 @@ export default function useCurrencyData(searchTerm) {
   const [data, setData] = useState([])
   const [inProgress, setInProgress] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
-  console.log(' searchTerm ', searchTerm)
   const apiUrl = process.env.REACT_APP_CURRENCY_API
   useEffect(() => {
     setInProgress(true)
     fetch(`${apiUrl}${CURRENCY_URI}`)
-      .finally(setInProgress(false))
       .then((res) => res.json())
       .then((data) => {
         setData(deserialiseCurrencyResponse(data, searchTerm))
@@ -21,6 +19,7 @@ export default function useCurrencyData(searchTerm) {
       .catch((err) => {
         console.log(err)
       })
+      .finally(setInProgress(false))
   }, [searchTerm])
   return { data, inProgress, isLoaded }
 }

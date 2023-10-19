@@ -4,7 +4,6 @@ import '../styles/SearchInput.scss'
 
 const SearchInput = ({ label = 'Search', ...rest }) => {
   const [searchTerm, setSearchTerm] = useContext(GlobalContext)
-  console.log(window.location)
   if (window.history.replaceState) {
     const url =
       window.location.protocol +
@@ -29,6 +28,7 @@ const SearchInput = ({ label = 'Search', ...rest }) => {
         className="input-area"
         value={searchTerm}
         onChange={handleChange}
+        type={'search'}
         {...rest}
       />
     </div>
