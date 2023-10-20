@@ -6,10 +6,9 @@ import { deserialiseCurrencyResponse } from '../../helpers/utils'
 import * as useCurrencyData from '../../hooks/fetchCurrency'
 
 describe('should render CurrencyList correctly', () => {
-  test('currency list is rendered', async () => {
+  test('currency list is rendered with data inside', async () => {
     const mockHook = jest.spyOn(useCurrencyData, 'default')
     const deserialisedData = deserialiseCurrencyResponse(mockedData)
-    console.log(' dese ', deserialisedData)
     mockHook.mockImplementation(() => ({
       data: deserialisedData,
       inProgress: false,
@@ -30,7 +29,6 @@ describe('should render CurrencyList correctly', () => {
       expect(container).toBeDefined()
       const list = screen.getByRole('list')
       expect(list).toBeTruthy()
-      console.log(' list 2 ', deserialisedData)
       const items = screen.getAllByRole('listitem')
       expect(items.length).toBe(deserialisedData.fxData.length)
     })
