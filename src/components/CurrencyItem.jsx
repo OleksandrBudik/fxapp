@@ -1,4 +1,5 @@
 import '../styles/CurrencyItem.scss'
+import PropTypes from 'prop-types'
 
 const CurrencyItem = ({
   currency,
@@ -20,6 +21,15 @@ const CurrencyItem = ({
       </div>
     </li>
   )
+}
+
+CurrencyItem.propTypes = {
+  currency: PropTypes.string,
+  countryName: PropTypes.string,
+  exchangeRate: PropTypes.number,
+  baseCurrency: PropTypes.string,
+  precision: PropTypes.number,
+  flagCode: PropTypes.string,
 }
 
 export default CurrencyItem

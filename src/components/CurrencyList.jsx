@@ -2,21 +2,13 @@ import useCurrencyData from '../hooks/fetchCurrency'
 import '../styles/CurrencyList.scss'
 import CurrencyItem from './CurrencyItem'
 import { currencies } from '../allCurrencies'
-import { useContext, useEffect } from 'react'
+import { useContext, useDeferredValue } from 'react'
 import { GlobalContext } from '../App.js'
 
 const CurrencyList = () => {
-  const [searchTerm, setSearchTerm] = useContext(GlobalContext)
-  const { data, inProgress, isLoaded } = useCurrencyData(searchTerm)
-  //   const [filteredData, setFilteredData] = useState(data)
-  console.log(' data! ', data)
-
-  useEffect(() => {
-    const hashValue = window.location.hash.substring(1)
-    if (hashValue) {
-      setSearchTerm(hashValue)
-    }
-  }, [])
+  const [searchTerm] = useContext(GlobalContext)
+  const defferedSearchTerm = useDeferredValue(searchTerm)
+  const { data, inProgress, isLoaded } = useCurrencyData(defferedSearchTerm)
 
   return (
     <ul className="currency-list">

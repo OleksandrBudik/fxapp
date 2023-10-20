@@ -2,74 +2,91 @@ import {
   validateCurrency,
   matchSearch,
   deserialiseCurrencyResponse,
+  setUrlHash,
 } from './utils'
 
-test('should validate currency correctly', () => {
-  const withWrongCurrencyField = {
-    currency: 123,
-    precision: 2,
-    exchangeRate: { middle: 12 },
-  }
-  const withoutCurrencyField = {
-    precision: 2,
-    exchangeRate: { middle: 12 },
-  }
-  const withWrongPrecisionField = {
-    currency: 'USD',
-    precision: 'wrong',
-    exchangeRate: { middle: 12 },
-  }
-  const withoutPrecisionField = {
-    currency: 'USD',
-    exchangeRate: { middle: 12 },
-  }
-  const withWrongExchangeRate = {
-    currency: 'USD',
-    precision: 2,
-    exchangeRate: { midl: 12 },
-  }
-  const withoutExchangeRate = {
-    currency: 'USD',
-    precision: 2,
-  }
-  const correctPayload = {
-    currency: 'USD',
-    precision: 2,
-    exchangeRate: { middle: 12 },
-  }
-  expect(validateCurrency(withWrongCurrencyField)).toBeFalsy()
-  expect(validateCurrency(withoutCurrencyField)).toBeFalsy()
-  expect(validateCurrency(withWrongPrecisionField)).toBeFalsy()
-  expect(validateCurrency(withoutPrecisionField)).toBeFalsy()
-  expect(validateCurrency(withWrongExchangeRate)).toBeFalsy()
-  expect(validateCurrency(withoutExchangeRate)).toBeFalsy()
-  expect(validateCurrency(correctPayload)).toBeTruthy()
+describe('should validate currency correctly', () => {
+  test('should return false for wrong currency field', () => {
+    const withWrongCurrencyField = {
+      currency: 123,
+      precision: 2,
+      exchangeRate: { middle: 12 },
+    }
+    expect(validateCurrency(withWrongCurrencyField)).toBeFalsy()
+  })
+  test('should return false if currency field is undefined', () => {
+    const withoutCurrencyField = {
+      precision: 2,
+      exchangeRate: { middle: 12 },
+    }
+    expect(validateCurrency(withoutCurrencyField)).toBeFalsy()
+  })
+  test('should return false if precision field is wrong', () => {
+    const withWrongPrecisionField = {
+      currency: 'USD',
+      precision: 'wrong',
+      exchangeRate: { middle: 12 },
+    }
+    expect(validateCurrency(withWrongPrecisionField)).toBeFalsy()
+  })
+  test('should return false if precision field is undefined', () => {
+    const withoutPrecisionField = {
+      currency: 'USD',
+      exchangeRate: { middle: 12 },
+    }
+    expect(validateCurrency(withoutPrecisionField)).toBeFalsy()
+  })
+  test('should return false if exchangeRate field is wrong', () => {
+    const withWrongExchangeRate = {
+      currency: 'USD',
+      precision: 2,
+      exchangeRate: { midl: 12 },
+    }
+    expect(validateCurrency(withWrongExchangeRate)).toBeFalsy()
+  })
+  test('should return false if exchangeRate is undefined', () => {
+    const withoutExchangeRate = {
+      currency: 'USD',
+      precision: 2,
+    }
+    expect(validateCurrency(withoutExchangeRate)).toBeFalsy()
+  })
+  test('should return true if currency fields are all correct', () => {
+    const correctPayload = {
+      currency: 'USD',
+      precision: 2,
+      exchangeRate: { middle: 12 },
+    }
+    expect(validateCurrency(correctPayload)).toBeTruthy()
+  })
 })
 
-test('should check if search term matches currency', () => {
-  const usSearchTermUC = 'US'
-  const usSearchTermLC = 'us'
-  const usSearchTermMixed = 'uS'
-  const fjdSearchTerm = 'j'
+describe('should check if search term matches currency', () => {
   const usdCurrency = {
     currency: 'USD',
-    precision: 2,
-    exchangeRate: { middle: 2.5 },
   }
-  const fjdCurrency = {
-    currency: 'FJD',
-    precision: 2,
-    exchangeRate: { middle: 2.5 },
-  }
-  expect(matchSearch(usdCurrency, usSearchTermUC)).toBeTruthy()
-  expect(matchSearch(usdCurrency, usSearchTermLC)).toBeTruthy()
-  expect(matchSearch(usdCurrency, usSearchTermMixed)).toBeTruthy()
-  expect(matchSearch(usdCurrency, fjdSearchTerm)).toBeFalsy()
-  expect(matchSearch(fjdCurrency, fjdSearchTerm)).toBeTruthy()
-  expect(matchSearch(fjdCurrency, usSearchTermUC)).toBeFalsy()
+  test('should pass validation with uppercase search term', () => {
+    const usSearchTermUC = 'US'
+    expect(matchSearch(usdCurrency, usSearchTermUC)).toBeTruthy()
+  })
+  test('should pass validation with lowercase search term', () => {
+    const usSearchTermLC = 'us'
+    expect(matchSearch(usdCurrency, usSearchTermLC)).toBeTruthy()
+  })
+  test('should pass validation with mixed search term', () => {
+    const usSearchTermMixed = 'uS'
+    expect(matchSearch(usdCurrency, usSearchTermMixed)).toBeTruthy()
+  })
+  test('should not pass validation if not included', () => {
+    const fjdSearchTerm = 'j'
+    expect(matchSearch(usdCurrency, fjdSearchTerm)).toBeFalsy()
+  })
+  test('should check if search term matches currency', () => {
+    const usSearchTermUC = 'US'
+    expect(matchSearch(usdCurrency, usSearchTermUC)).toBeTruthy()
+  })
 })
-
-test('should deserialise currency response', () => {
+describe('should deserialise currency response', () => {
   const response = {
     institute: 198,
     lastUpdated: '2018-11-09T15:07:00Z',
@@ -118,10 +135,19 @@ test('should deserialise currency response', () => {
       },
     ],
   }
+  test('should set fxData if baseCurrency is valid', () => {
+    expect(deserialiseCurrencyResponse(response).fxData).toHaveLength(1)
+    expect(deserialiseCurrencyResponse(response).baseCurrency).toBe('EUR')
+  })
+  test('should set fxData to empty array if baseCurrency is not valid', () => {
+    const invalidResponse = { ...response, baseCurrency: undefined }
+    expect(deserialiseCurrencyResponse(invalidResponse).fxData).toHaveLength(0)
+  })
+})
 
-  const invalidResponse = { ...response, baseCurrency: undefined }
-
-  expect(deserialiseCurrencyResponse(response).fxData).toHaveLength(1)
-  expect(deserialiseCurrencyResponse(response).baseCurrency).toBe('EUR')
-  expect(deserialiseCurrencyResponse(invalidResponse).fxData).toHaveLength(0)
+describe('should set hash in url', () => {
+  const search = 'testsearch'
+  const expectedhasValueInUrl = `#${search}`
+  setUrlHash(search)
+  expect(window.location.hash).toBe(expectedhasValueInUrl)
 })

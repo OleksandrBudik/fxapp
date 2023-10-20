@@ -35,3 +35,9 @@ export const deserialiseCurrencyResponse = (response, searchTerm = '') => {
   }
   return { fxData: [] }
 }
+
+export const setUrlHash = (term) => {
+  if (window.history) {
+    window.history.pushState(null, null, `#${term}`)
+  }
+}
