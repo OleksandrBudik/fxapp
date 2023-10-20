@@ -10,7 +10,7 @@ export const GlobalContext = React.createContext()
 function App() {
   const [searchTerm, setSearchTerm] = useState('')
   useEffect(() => {
-    const hashValue = window.location.hash.substring(1)
+    const hashValue = decodeURIComponent(window.location.hash.substring(1))
     if (hashValue) {
       setSearchTerm(hashValue)
     }
